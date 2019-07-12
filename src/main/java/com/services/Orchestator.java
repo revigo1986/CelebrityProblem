@@ -42,7 +42,12 @@ public class Orchestator implements IOrchestator {
 		char current;
 		while (fis.available() > 0) {
 			current = (char) fis.read();
-			System.out.print(current);
+			
+//			System.out.print(current);
+			count++;
+			if(count > matrixSize) {
+				
+			}
 		}
 		return sb.toString();
 	}
