@@ -1,10 +1,13 @@
 package com.services;
 
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Scanner;
 import java.util.Stack;
 
 import org.springframework.stereotype.Service;
@@ -18,43 +21,33 @@ public class Orchestator implements IOrchestator {
 
 	@Override
 	public int execute(int testCasesId) throws IOException {
-		String fileContent = readInputFile(testCasesId);
-		people = createMatrix(fileContent);
+		people = readInputFile(testCasesId);
+//		people = createMatrix(fileContent);
 		int celebrityId = findTheCelebrityId(people);
 		return celebrityId;
 	}
 
-	private String readInputFile(int testCasesId) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		File file = new File(FILE_NAME);
-//		BufferedReader br = new BufferedReader(new FileReader(file));
-//		String st;
-//
-//		while ((st = br.readLine()) != null) {
-//			sb.append(st);
-//		}
-//		
-//		
-//		br.close();
-//		System.out.println(sb.toString());
+	private int[][] readInputFile(int testCasesId) throws IOException {
+		File file = new File(FILE_NAME); // filename is a user input
+	    Scanner fileScan = new Scanner(file);   
 
-		FileInputStream fis = new FileInputStream(file);
-		char current;
-		while (fis.available() > 0) {
-			current = (char) fis.read();
-			
-//			System.out.print(current);
-			count++;
-			if(count > matrixSize) {
-				
-			}
-		}
-		return sb.toString();
-	}
+	    // determine the board size
+	    int rows = fileScan.nextInt();
+	    int cols = fileScan.nextInt();
+	    fileScan.nextLine();
 
-	private int[][] createMatrix(String fileContent) {
+	    int[][] board = new int[rows][cols];    
 
-		return people;
+	    for( int row = 0; row < board.length; row++){
+	        for (int col = 0; col < board[row].length ; col++){
+	            if (fileScan.hasNext()) {
+	                board[row][col] = new Integer(fileScan.next());
+	                System.out.print(board[row][col] + "");
+	            }
+	        }
+	        System.out.println("");
+	    }
+	    return board;
 	}
 
 	private int findTheCelebrityId(int[][] arrayFromFile) {
@@ -86,6 +79,7 @@ public class Orchestator implements IOrchestator {
 			// Step 3 : Push the
 			// remained person onto stack.
 			if (checkPeople(a, b)) {
+				System.out.print("a y b: "+a+" "+b);
 				st.push(b);
 			}
 
