@@ -1,108 +1,89 @@
 package com.services;
 
-import java.awt.Point;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import java.util.Stack;
 
 import org.springframework.stereotype.Service;
 
 @Service
 public class Orchestator implements IOrchestator {
 
-	private static final String FILE_NAME = "celebrityInputFile.txt";
+	private static final String INPUT_FILE = "celebrityInputFile.txt";
 
 	private static int people[][];
-
+	
 	@Override
-	public int execute(int testCasesId) throws IOException {
-		people = readInputFile(testCasesId);
-//		people = createMatrix(fileContent);
+	public int execute() throws IOException {
+		people = readInputFile();
 		int celebrityId = findTheCelebrityId(people);
 		return celebrityId;
 	}
 
-	private int[][] readInputFile(int testCasesId) throws IOException {
-		File file = new File(FILE_NAME); // filename is a user input
+	private int[][] readInputFile() throws IOException {
+		File file = new File(INPUT_FILE);
 	    Scanner fileScan = new Scanner(file);   
 
-	    // determine the board size
 	    int rows = fileScan.nextInt();
 	    int cols = fileScan.nextInt();
 	    fileScan.nextLine();
 
-	    int[][] board = new int[rows][cols];    
+	    int[][] square = new int[rows][cols];    
 
-	    for( int row = 0; row < board.length; row++){
-	        for (int col = 0; col < board[row].length ; col++){
+	    for( int row = 0; row < square.length; row++){
+	        for (int col = 0; col < square[row].length ; col++){
 	            if (fileScan.hasNext()) {
-	                board[row][col] = new Integer(fileScan.next());
-	                System.out.print(board[row][col] + "");
+	                square[row][col] = new Integer(fileScan.next());
 	            }
 	        }
-	        System.out.println("");
 	    }
-	    return board;
+	    return square;
 	}
 
 	private int findTheCelebrityId(int[][] arrayFromFile) {
 		people = arrayFromFile;
-		// Matrix size
-		int n = 2;
 
-		// Returns -1 if celebrity
-		// is not present. If present,
-		// returns id (value from 0 to n-1).
-		Stack<Integer> st = new Stack<>();
-		int c;
+		List<Integer> list = new ArrayList<>();
+		int celebrityId;
 
-		// Step 1 :Push everybody
-		// onto stack
-		for (int i = 0; i < n; i++) {
-			st.push(i);
+		for (int i = 0; i < people.length; i++) {
+			list.add(i);
 		}
 
-		while (st.size() > 1) {
-			// Step 2 :Pop off top
-			// two persons from the
-			// stack, discard one
-			// person based on return
-			// status of knows(A, B).
-			int a = st.pop();
-			int b = st.pop();
-
-			// Step 3 : Push the
-			// remained person onto stack.
-			if (checkPeople(a, b)) {
-				System.out.print("a y b: "+a+" "+b);
-				st.push(b);
+		while (list.size() > 1) {
+			int a = list.get(0);
+			int b = list.get(1);
+			list.remove(1);
+			list.remove(0);
+			
+			if (doesAKnowsB(a, b)) {
+				list.add(b);
+			}else {
+				list.add(a);
 			}
-
-			else
-				st.push(a);
 		}
 
-		c = st.pop();
+		celebrityId = list.get(0);
 
-		// Step 5 : Check if the last
-		// person is celebrity or not
-		for (int i = 0; i < n; i++) {
-			// If any person doesn't
-			// know 'c' or 'a' doesn't
-			// know any person, return -1
-			if (i != c && (checkPeople(c, i) || !checkPeople(i, c)))
-				return -1;
+		for (int i = 0; i < people.length; i++) {
+			if (i != celebrityId) {
+				if (doesAKnowsB(celebrityId, i) || !doesAKnowsB(i, celebrityId)) {
+					return -1;
+				}
+			}
 		}
-		return c;
+		return celebrityId;
 	}
 
-	private boolean checkPeople(int a, int b) {
-		boolean res = (people[a][b] == 1) ? true : false;
-		return res;
+	private boolean doesAKnowsB(int a, int b) {
+		Boolean result;
+		if (people[a][b] == 1) {
+			result = true;
+		}else {
+			result = false;
+		}
+		return result;
 	}
 }
