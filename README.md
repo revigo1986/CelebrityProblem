@@ -12,4 +12,5 @@ anyone does know the celebrity and the celebrity does not know anyone are review
 
 There are Test class for Controller and Orchestator classes.
 
-    
+The url from the service is http://localhost:8081/CelebrityProblem, as it is using an 8081 port for isolation. If there is a problem with the deployment,
+the port can be modified in the application.properties file.
